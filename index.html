@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KT ASIM Bot</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0a;color:#fff;font-family:system-ui;display:flex;flex-direction:column;height:100vh}
+#chat{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px}
+.msg{max-width:85%;padding:12px 16px;border-radius:18px;line-height:1.5;white-space:pre-wrap}
+.user{align-self:flex-end;background:#2a2a2a}.bot{align-self:flex-start;background:#1a1a1a;border:1px solid #333}
+#bar{display:flex;gap:10px;padding:14px;background:#111;border-top:1px solid #222}
+#inp{flex:1;background:#222;border:none;color:#fff;padding:14px 18px;border-radius:24px;outline:none}
+#send{background:#fff;color:#000;border:none;width:44px;height:44px;border-radius:50%;cursor:pointer}
+.top{padding:12px 20px;border-bottom:1px solid #222;font-weight:600}
+</style>
+</head>
+<body>
+<div class="top">KT ASIM Bot - Always Working</div>
+<div id="chat"></div>
+<div id="bar"><input id="inp" placeholder="Ask KT ASIM..."><button id="send">↑</button></div>
+<script>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
+const API_KEY = 
+const MODELS = [
+  "google/gemini-2.0-flash-001",
+  "google/gemini-flash-1.5-8b",
+  "meta-llama/llama-3.3-70b-instruct:free"
+];
+const chat=document.getElementById('chat'), inp=document.getElementById('inp');
+function addMsg(t,c){const d=document.createElement('div');d.className='msg '+c;d.textContent=t;chat.appendChild(d);chat.scrollTop=chat.scrollHeight;return d;}
+async function ask(q){
+ addMsg(q,'user'); inp.value='';
+ const b=addMsg('Thinking...','bot');
+ for(let MODEL of MODELS){
+  try{
+   const r=await fetch('https://openrouter.ai/api/v1/chat/completions',{
+    method:'POST',
+    headers:{'Authorization':'Bearer '+API_KEY,'Content-Type':'application/json','HTTP-Referer':'https://try495zxz.github.io','X-Title':'KT ASIM Bot'},
+    body:JSON.stringify({model:MODEL,messages:[{role:'user',content:q}]})
+   });
+   const data=await r.json();
+   if(data.error) continue; // error aaye to next model try karo
+   b.textContent=data.choices[0].message.content;
+   return;
+  }catch(e){ continue; }
+ }
+ b.textContent='Sab models busy hain, 1 min baad try karo.';
+}
+document.getElementById('send').onclick=()=>{if(inp.value.trim())ask(inp.value.trim());};
+inp.onkeydown=e=>{if(e.key==='Enter'&&inp.value.trim())ask(inp.value.trim());};
+</script>
+</body>
+  </html>
